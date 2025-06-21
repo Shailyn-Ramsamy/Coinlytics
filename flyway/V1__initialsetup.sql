@@ -1,0 +1,24 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    google_id VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE cryptos (
+    id SERIAL PRIMARY KEY,
+    symbol VARCHAR(10) UNIQUE NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    coingecko_id VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE user_purchases (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    crypto_id INTEGER REFERENCES cryptos(id) ON DELETE CASCADE,
+    amount_spent NUMERIC(20, 2) NOT NULL,
+    currency VARCHAR(10) NOT NULL DEFAULT 'USD',
+    purchase_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
