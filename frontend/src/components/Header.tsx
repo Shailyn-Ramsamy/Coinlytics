@@ -14,7 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import SavingsIcon from "@mui/icons-material/Savings";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const pages = ["Products", "Pricing", "Blog"];
+const pages = ["Home", "My Dashboard", "News"];
 const settings = ["Logout"];
 
 function Header() {
@@ -42,6 +42,13 @@ function Header() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleNews = () => {
+    navigate("/news");
+  };
+  const handleDashboard = () => {
+    navigate("/dashboard");
   };
 
   const handleLogout = () => {
@@ -102,13 +109,16 @@ function Header() {
                     onClose={handleCloseNavMenu}
                     sx={{ display: { xs: "block", md: "none" } }}
                   >
-                    {pages.map((page) => (
-                      <MenuItem key={page} onClick={handleCloseNavMenu}>
+                      <MenuItem onClick={handleDashboard}>
                         <Typography sx={{ textAlign: "center" }}>
-                          {page}
+                          My Dashboard
                         </Typography>
                       </MenuItem>
-                    ))}
+                      <MenuItem onClick={handleNews}>
+                        <Typography sx={{ textAlign: "center" }}>
+                          News
+                        </Typography>
+                      </MenuItem>
                   </Menu>
                 </Box>
                 <SavingsIcon
@@ -130,18 +140,20 @@ function Header() {
                     textDecoration: "none",
                   }}
                 >
-                  LOGO
                 </Typography>
                 <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                  {pages.map((page) => (
                     <Button
-                      key={page}
-                      onClick={handleCloseNavMenu}
+                      onClick={handleDashboard}
                       sx={{ my: 2, color: "white", display: "block" }}
                     >
-                      {page}
+                      My Dashboard
                     </Button>
-                  ))}
+                    <Button
+                      onClick={handleNews}
+                      sx={{ my: 2, color: "white", display: "block" }}
+                    >
+                      News
+                    </Button>
                 </Box>
                 <Box sx={{ flexGrow: 0 }}>
                   <Tooltip title="Open settings">

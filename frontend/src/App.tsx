@@ -5,6 +5,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, Button } from '@mui/material';
 import DashboardScreen from './screens/DashboardScreen';
 import PrivateRoute from './components/PrivateRoute';
+import NewsScreen from './screens/NewsScreen';
 
 const theme = createTheme({
   palette: {
@@ -32,6 +33,7 @@ function App() {
               <Route path='/' element={<LoginScreen />}/>
               <Route element={<PrivateRoute />}>
                 <Route path="/dashboard" element={<DashboardScreen />} />
+                <Route path="/news" element={<NewsScreen />} />
               </Route>
             </Routes>
         </main>

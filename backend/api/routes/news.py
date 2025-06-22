@@ -1,19 +1,33 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 import os
 import requests
+from typing import Optional
+from starlette import status
+from dotenv import load_dotenv
+load_dotenv()
 
 router = APIRouter()
 
-@router.get("/news")
-def get_crypto_news():
-    token = os.getenv("CRYPTOPANIC_API_KEY")
+router = APIRouter(prefix="/news", tags=["news"])
+
+@router.get("/stocks")
+def get_stock_news(
+    category: Optional[str] = Query("general", description="News category: general, forex, crypto, or merger"),
+):
+    token = os.getenv("FINNHUB_API_KEY")
     if not token:
         raise HTTPException(status_code=500, detail="API key not configured.")
 
-    url = f"https://cryptopanic.com/api/v1/posts/?auth_token={token}&filter=rising"
-    response = requests.get(url)
+    url = f"https://finnhub.io/api/v1/news"
+    params = {
+        "category": category,
+        "token": token
+    }
 
-    if response.status_code != 200:
-        raise HTTPException(status_code=500, detail="Failed to fetch news")
+    try:
+        response = requests.get(url, params=params, timeout=5)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Stock news fetch failed: {str(e)}")
 
     return response.json()

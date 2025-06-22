@@ -9,4 +9,4 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     google_id = Column(String(50), unique=True, nullable=False) 
     email = Column(String(255), unique=True, nullable=False)
-    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    created_at = Column(TIMESTAMP, default=datetime.now)
