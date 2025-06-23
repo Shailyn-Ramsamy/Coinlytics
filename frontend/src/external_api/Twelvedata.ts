@@ -28,25 +28,50 @@ export async function fetchStockGrowth(userId: number, stockId: number): Promise
   }
 }
 
+export async function fetchTotalPortfolioGrowth(userId: number): Promise<StockGrowthPoint[]> {
+  try {
+    const response = await api.get<StockGrowthPoint[]>(
+      `/stock/growth/total`,
+      {
+        params: { user_id: userId },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching stock growth:", error);
+    throw error;
+  }
+}
+
+
 export async function fetchUserStocks(userId: number) {
-  const res = await fetch(`http://localhost:8000/stock/user-stocks?user_id=${userId}`);
-  if (!res.ok) throw new Error("Failed to fetch user stocks");
-  return await res.json();
+  try {
+    const res = await api.get("/stock/user-stocks", {
+      params: { user_id: userId },
+    });
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch user stocks", err);
+    throw new Error("Failed to fetch user stocks");
+  }
 }
 
 export async function searchStocks(query: string, page: number = 1, pageSize: number = 10) {
-  const res = await fetch(
-    `http://localhost:8000/stocks/search?query=${encodeURIComponent(query)}&page=${page}&page_size=${pageSize}`
-  );
-
-  if (!res.ok) {
+  try {
+    const res = await api.get("/stocks/search", {
+      params: {
+        query,
+        page,
+        page_size: pageSize,
+      },
+    });
+    return res.data as { id: number; symbol: string; name: string }[];
+  } catch (err) {
+    console.error("Failed to search stocks", err);
     throw new Error("Failed to search stocks");
   }
-
-  const data = await res.json();
-  return data as { id: number; symbol: string; name: string }[];
 }
-
 
 
 
@@ -62,8 +87,15 @@ export async function postStockPurchase(userId: number, payload: PurchasePayload
 }
 
 export async function fetchUserDistribution(userId: number) {
-  const res = await fetch(`http://localhost:8000/stocks/distribution?user_id=${userId}`);
-  if (!res.ok) throw new Error("Failed to fetch user stocks");
-  return await res.json();
+  try {
+    const res = await api.get("/stocks/distribution", {
+      params: { user_id: userId },
+    });
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch user stocks", err);
+    throw new Error("Failed to fetch user stocks");
+  }
 }
+
 

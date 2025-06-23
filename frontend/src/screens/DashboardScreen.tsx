@@ -31,6 +31,7 @@ import {
   fetchUserStocks,
   postStockPurchase,
   fetchUserDistribution,
+  fetchTotalPortfolioGrowth,
 } from "../external_api/Twelvedata";
 import AddIcon from "@mui/icons-material/Add";
 import AddStockModal from "../components/StockModal";
@@ -86,23 +87,30 @@ export default function Dashboard() {
 
   useEffect(() => {
     const loadStocks = async () => {
-      try {
-        const stocks = await fetchUserStocks(userInfo.id);
-        setStockList(stocks);
-        if (stocks.length > 0) {
-          setSelectedStock(stocks[0].id);
+        try {
+          const stocks = await fetchUserStocks(userInfo.id);
+
+          // Add "Total Portfolio" entry
+          const fullList = [
+            { id: 0, symbol: "ALL", name: "Total Portfolio" },
+            ...stocks,
+          ];
+
+          setStockList(fullList);
+
+          // Select "Total Portfolio" by default
+          setSelectedStock(0);
+        } catch (err) {
+          console.error("Failed to load stock list", err);
+        } finally {
+          setInitialLoading(false);
         }
-      } catch (err) {
-        console.error("Failed to load stock list", err);
-      } finally {
-        setInitialLoading(false);
-      }
-    };
-    loadStocks();
+      };
+      loadStocks();
   }, []);
 
   useEffect(() => {
-  if (!selectedStock) return;
+  if (selectedStock === "" || selectedStock === undefined) return;
 
   const loadGrowthData = async () => {
     const cached = growthCache.current[selectedStock];
@@ -113,11 +121,18 @@ export default function Dashboard() {
 
     setLoading(true);
     try {
-      const data = await fetchStockGrowth(userInfo.id, selectedStock);
-      growthCache.current[selectedStock] = data; // Cache it
+      let data;
+
+      if (selectedStock === 0) {
+        data = await fetchTotalPortfolioGrowth(userInfo.id);
+      } else {
+        data = await fetchStockGrowth(userInfo.id, selectedStock);
+      }
+
+      growthCache.current[selectedStock] = data; // ✅ Cache total too
       setGrowthData(data);
     } catch (err) {
-      console.error("Error loading stock growth data:", err);
+      console.error("Error loading growth data:", err);
     } finally {
       setLoading(false);
     }
@@ -125,6 +140,7 @@ export default function Dashboard() {
 
   loadGrowthData();
 }, [selectedStock]);
+
 
 
   const handleStockAdded = async (newStock: {
@@ -138,7 +154,11 @@ export default function Dashboard() {
       await postStockPurchase(userInfo.id, newStock);
 
       const updated = await fetchUserStocks(userInfo.id);
-      setStockList(updated);
+      const fullList = [
+        { id: 0, symbol: "ALL", name: "Total Portfolio" },
+        ...updated,
+      ];
+      setStockList(fullList);
 
       distributionCache.current[userInfo.id] = undefined; // Clear before reloading
       await loadDistribution();
@@ -168,6 +188,7 @@ export default function Dashboard() {
       </Box>
     );
   }
+  
 
   // Show empty state if there are no stocks
   if (!initialLoading && stockList.length === 0) {
@@ -183,9 +204,14 @@ export default function Dashboard() {
           sx={{ width: 300, mt: 2 }}
         />
         <Box mt={3}>
-          <Button variant="contained" color="primary">
-            Add Stock Investment
-          </Button>
+          <Fab
+            size="medium"
+            color="secondary"
+            aria-label="add"
+            onClick={() => setModalOpen(true)}
+          >
+            <AddIcon />
+          </Fab>
         </Box>
       </Box>
     );
@@ -193,6 +219,11 @@ export default function Dashboard() {
 
   return (
     <Box p={3} sx={{ minHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+      <AddStockModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onAddStock={handleStockAdded}
+      />
       <Box
         display="flex"
         justifyContent="space-between"
@@ -210,26 +241,21 @@ export default function Dashboard() {
         </Fab>
       </Box>
 
-      <AddStockModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onAddStock={handleStockAdded}
-      />
-
       <FormControl sx={{ minWidth: 200, mb: 3 }}>
         <InputLabel id="stock-select-label">Select Stock</InputLabel>
         <Select
-          labelId="stock-select-label"
-          value={selectedStock}
-          label="Select Stock"
-          onChange={(e) => setSelectedStock(Number(e.target.value))}
-        >
-          {stockList.map((stock) => (
-            <MenuItem key={stock.id} value={stock.id}>
-              {stock.name} ({stock.symbol})
-            </MenuItem>
-          ))}
-        </Select>
+  labelId="stock-select-label"
+  value={selectedStock}
+  label="Select Stock"
+  onChange={(e) => setSelectedStock(Number(e.target.value))}
+>
+  {stockList.map((stock) => (
+    <MenuItem key={stock.id} value={stock.id}>
+      {stock.name} ({stock.symbol})
+    </MenuItem>
+  ))}
+</Select>
+
       </FormControl>
 
       <Grid container spacing={2} sx={{ flex: 1 , paddingTop: 4}}>

@@ -2,25 +2,27 @@
 import axios from "axios";
 import { GoogleUser } from "../types/user";
 import { useNavigate } from "react-router-dom";
+import api from "./axios";
 
-export const loginUser = async (token: string): Promise<GoogleUser> => {
+export const loginUser = async (token: string): Promise<void> => {
   try {
-    const res = await axios.post<GoogleUser>(
-      "http://127.0.0.1:8000/auth/google",
-      { token }
+    await api.post(
+      "/auth/google",
+      { token },
+      { withCredentials: true }
     );
+    
+    const res = await api.get("/auth/me");
+    localStorage.setItem("userInfo", JSON.stringify(res.data));
 
-    const userData = res.data;
-    localStorage.setItem("userInfo", JSON.stringify(userData));
-
-    return userData;
   } catch (error: any) {
     console.error("Google login failed", error);
     throw new Error(error?.response?.data?.detail || "Google login failed");
   }
 };
 
+
 export const logoutUser = (navigate: ReturnType<typeof useNavigate>) => {
   localStorage.removeItem("userInfo");
-  navigate("/login"); // use wherever needed
+  navigate("/"); // use wherever needed
 };
