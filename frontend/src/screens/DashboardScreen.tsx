@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Grid,
-  Card,
-  CardContent,
   Typography,
   MenuItem,
   FormControl,
@@ -15,18 +13,6 @@ import {
   Snackbar,
 } from "@mui/material";
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Legend,
-  Cell,
-} from "recharts";
-import {
   fetchStockGrowth,
   StockGrowthPoint,
   fetchUserStocks,
@@ -36,6 +22,10 @@ import {
 } from "../external_api/Twelvedata";
 import AddIcon from "@mui/icons-material/Add";
 import AddStockModal from "../components/StockModal";
+import PortfolioStats from "../components/PortfolioStats";
+import PerformanceChart from "../components/PerformanceChart";
+import PortfolioDistribution from "../components/PortfolioDistribution";
+import EmptyPortfolio from "../components/EmptyPortfolio";
 
 export default function Dashboard() {
   const [growthData, setGrowthData] = useState<StockGrowthPoint[]>([]);
@@ -182,19 +172,8 @@ export default function Dashboard() {
   };
 
   const selectedStockName = stockList.find((s) => s.id === selectedStock)?.name;
-
-  const selectedIndex = distributionData.findIndex(
-    (d) => d.name === selectedStockName
-  );
-
+  const selectedIndex = distributionData.findIndex((d) => d.name === selectedStockName);
   const selectedColor = COLORS[selectedIndex % COLORS.length] || "#8884d8";
-
-  const initial = growthData[0]?.value || 0;
-  const current = growthData[growthData.length - 1]?.value || 0;
-  const profitLoss = current - initial;
-  const isProfit = profitLoss >= 0;
-  const percentChange =
-    initial !== 0 ? ((profitLoss / initial) * 100).toFixed(2) : "0.00";
 
   if (initialLoading) {
     return (
@@ -207,33 +186,14 @@ export default function Dashboard() {
 
   if (!initialLoading && stockList.length === 1) {
     return (
-      <Box p={3} textAlign="center">
+      <>
         <AddStockModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           onAddStock={handleStockAdded}
         />
-        <Typography variant="h5" gutterBottom>
-          You have no stock investments.
-        </Typography>
-        <Box
-          component="img"
-          src="/empty_portfolio.svg"
-          alt="No investments"
-          sx={{ width: 300, mt: 2 }}
-        />
-        <Box mt={3}>
-          <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={() => setModalOpen(true)}
-          sx={{ height: 56 }}
-        >
-          Add Investment
-        </Button>
-        </Box>
-      </Box>
+        <EmptyPortfolio onAddClick={() => setModalOpen(true)} />
+      </>
     );
   }
 
@@ -293,244 +253,14 @@ export default function Dashboard() {
       </Box>
 
       <Grid container spacing={2} sx={{ flex: 1 }}>
-        <Grid
-          size={{ xs: 12, md: 3 }}
-          sx={{ display: "flex", flexDirection: "column" }}
-        >
-          <Card sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-            <CardContent
-              sx={{ flex: 1, display: "flex", flexDirection: "column" }}
-            >
-              <Typography variant="h6" gutterBottom>
-                Initial Invested
-              </Typography>
-              {loading || !growthData.length ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height={100}
-                >
-                  <CircularProgress size={24} />
-                </Box>
-              ) : (
-                <Box>
-                  {(() => {
-                    return (
-                      <Typography
-                        variant="h4"
-                        sx={{
-                          fontWeight: "bold",
-                        }}
-                      >
-                        ${initial}
-                      </Typography>
-                    );
-                  })()}
-                </Box>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid
-          size={{ xs: 12, md: 3 }}
-          sx={{ display: "flex", flexDirection: "column" }}
-        >
-          <Card sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-            <CardContent
-              sx={{ flex: 1, display: "flex", flexDirection: "column" }}
-            >
-              <Typography variant="h6" gutterBottom>
-                Current Value
-              </Typography>
-              {loading || !growthData.length ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height={100}
-                >
-                  <CircularProgress size={24} />
-                </Box>
-              ) : (
-                <Box>
-                  {(() => {
-                    return (
-                      <Typography
-                        variant="h4"
-                        sx={{
-                          fontWeight: "bold",
-                        }}
-                      >
-                        ${current}
-                      </Typography>
-                    );
-                  })()}
-                </Box>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid
-          size={{ xs: 12, md: 6 }}
-          sx={{ display: "flex", flexDirection: "column" }}
-        >
-          <Card sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-            <CardContent
-              sx={{ flex: 1, display: "flex", flexDirection: "column" }}
-            >
-              <Typography variant="h6" gutterBottom>
-                Return
-              </Typography>
-              {loading || !growthData.length ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height={100}
-                >
-                  <CircularProgress size={24} />
-                </Box>
-              ) : (
-                <Box>
-                  {(() => {
-                    return (
-                      <Typography
-                        variant="h4"
-                        sx={{
-                          color: isProfit ? "green" : "red",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {isProfit ? "+" : "-"}${Math.abs(profitLoss).toFixed(2)} (
-                        {isProfit ? "+" : "-"}{Math.abs(parseFloat(percentChange)).toFixed(2)}%)
-                      </Typography>
-                    );
-                  })()}
-                </Box>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid
-          size={{ xs: 12, md: 9 }}
-          sx={{ display: "flex", flexDirection: "column" }}
-        >
-          <Card sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-            <CardContent
-              sx={{ flex: 1, display: "flex", flexDirection: "column" }}
-            >
-              <Typography variant="h6" gutterBottom>
-                {selectedStock
-                  ? `Performance of ${
-                      stockList.find((s) => s.id === selectedStock)?.name
-                    }`
-                  : "Select a stock"}
-              </Typography>
-              {loading ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height={300}
-                >
-                  <CircularProgress />
-                </Box>
-              ) : (
-                <ResponsiveContainer width="100%">
-                  <LineChart data={growthData}>
-                    <XAxis dataKey="date" stroke="#ccc" />
-                    <YAxis stroke="#ccc" />
-                    <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke={selectedColor}
-                      strokeWidth={2}
-                      dot={growthData.length < 50}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid
-          size={{ xs: 12, md: 3 }}
-          sx={{ display: "flex", flexDirection: "column" }}
-        >
-          <Card sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-            <CardContent
-              sx={{ flex: 1, display: "flex", flexDirection: "column" }}
-            >
-              <Typography
-                variant="h6"
-                gutterBottom
-                sx={{
-                  fontFamily: "monospace",
-                  fontWeight: 500,
-                  letterSpacing: ".05rem",
-                  mt: 1,
-                }}
-              >
-                Portfolio Distribution
-              </Typography>
-
-              {distributionData.length === 0 ? (
-                <Typography>No data to show.</Typography>
-              ) : (
-                <>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        dataKey="value"
-                        isAnimationActive={true}
-                        data={distributionData}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        label
-                      >
-                        {distributionData.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-
-                  <Box
-                    sx={{
-                      maxHeight: 150,
-                      overflowY: "auto",
-                      mt: 2,
-                      pr: 1,
-                    }}
-                  >
-                    {distributionData.map((entry, index) => (
-                      <Typography
-                        key={index}
-                        variant="h6"
-                        sx={{
-                          color: COLORS[index % COLORS.length],
-                          fontFamily: "monospace",
-                          fontWeight: 400,
-                          letterSpacing: ".02rem",
-                          mt: 1,
-                        }}
-                      >
-                        {entry.name}: {entry.value.toFixed(2)} USD
-                      </Typography>
-                    ))}
-                  </Box>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
+        <PortfolioStats growthData={growthData} loading={loading} />
+        <PerformanceChart 
+          growthData={growthData} 
+          loading={loading} 
+          selectedStockName={selectedStockName}
+          selectedColor={selectedColor}
+        />
+        <PortfolioDistribution distributionData={distributionData} colors={COLORS} />
       </Grid>
       
       <Snackbar 
