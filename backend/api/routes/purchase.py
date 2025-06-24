@@ -32,10 +32,6 @@ def get_user_stock_growth(
     db: Session = Depends(get_db),
     token_user: dict = Depends(get_current_user)
 ):
-    """
-    Returns a list of daily portfolio value for a specific stock,
-    calculated using purchase history and historical closing prices.
-    """
     return get_stock_growth(token_user["user_id"], stock_id=stock_id, db=db)
 
 @router.get("/growth/total", status_code=status.HTTP_200_OK)

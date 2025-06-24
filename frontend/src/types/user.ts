@@ -6,7 +6,7 @@ export type GoogleUser = {
 };
 
 export type AppUser = {
-  id: number;             // From your DB
+  id: number;
   email: string;
   name?: string;
   picture?: string;

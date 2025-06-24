@@ -24,5 +24,5 @@ export const loginUser = async (token: string): Promise<void> => {
 
 export const logoutUser = (navigate: ReturnType<typeof useNavigate>) => {
   localStorage.removeItem("userInfo");
-  navigate("/"); // use wherever needed
+  navigate("/");
 };

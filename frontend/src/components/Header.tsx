@@ -67,7 +67,7 @@ function Header() {
               variant="h6"
               noWrap
               component="a"
-              href="#app-bar-with-responsive-menu"
+              onClick={handleDashboard}
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
@@ -128,7 +128,7 @@ function Header() {
                   variant="h5"
                   noWrap
                   component="a"
-                  href="#app-bar-with-responsive-menu"
+                  onClick={handleDashboard}
                   sx={{
                     mr: 2,
                     display: { xs: "flex", md: "none" },
@@ -140,6 +140,7 @@ function Header() {
                     textDecoration: "none",
                   }}
                 >
+                  {isLoginPage ? "Coinlytics" : ""}
                 </Typography>
                 <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
                     <Button

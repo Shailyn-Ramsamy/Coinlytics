@@ -10,10 +10,8 @@ password = urllib.parse.quote_plus(os.getenv("DB_PASSWORD", ""))
 db_host = os.getenv('DB_HOST')
 
 if db_host.startswith('/cloudsql/'):
-    # Unix socket connection for Cloud SQL
     DATABASE_URL = f"postgresql+psycopg2://{os.getenv('DB_USER')}:{password}@/{os.getenv('DB_NAME')}?host={db_host}"
 else:
-    # TCP connection for local/external DB
     DATABASE_URL = f"postgresql+psycopg2://{os.getenv('DB_USER')}:{password}@{db_host}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
 
 engine = create_engine(DATABASE_URL, echo=False)

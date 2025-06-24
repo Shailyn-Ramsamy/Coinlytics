@@ -28,7 +28,7 @@ function LoginScreen() {
                 alignItems="center"
                 minHeight="80vh"
             >
-                <Paper elevation={3} sx={{ p: 4, width: '100%', textAlign: 'center' }}>
+                <Paper elevation={3} sx={{ p: 4, width: 350, textAlign: 'center' }}>
                 <Typography variant="h4" gutterBottom>
                     Sign In
                 </Typography>

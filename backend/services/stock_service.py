@@ -22,7 +22,6 @@ def search_stocks(db: Session, query: str = "", page: int = 1, page_size: int = 
     )
 
 def get_portfolio_distribution(db: Session, user_id: int):
-    # Get all distinct stocks the user has invested in
     stocks = (
         db.query(Stock)
         .join(Stock.purchases)
@@ -37,7 +36,7 @@ def get_portfolio_distribution(db: Session, user_id: int):
         try:
             growth = get_stock_growth(user_id=user_id, stock_id=stock.id, db=db)
             if growth:
-                latest = growth[-1]  # Most recent value
+                latest = growth[-1]
                 result.append({
                     "name": f"{stock.name} ({stock.symbol})",
                     "value": latest["value"],

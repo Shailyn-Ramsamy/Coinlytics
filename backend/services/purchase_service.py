@@ -24,7 +24,6 @@ def create_purchase(db: Session, user_id: int, purchase: PurchaseCreate):
     purchase_date = purchase.purchase_date
     end_date = purchase_date + timedelta(days=1)
 
-    # Check if price already exists in DB
     existing_price = (
         db.query(StockPrice)
         .filter(StockPrice.stock_id == stock.id, StockPrice.date == purchase_date)
@@ -34,7 +33,6 @@ def create_purchase(db: Session, user_id: int, purchase: PurchaseCreate):
     if existing_price:
         price_per_share = float(existing_price.close_price)
     else:
-        # Fetch from API
         url = "https://api.twelvedata.com/time_series"
         params = {
             "symbol": symbol,
@@ -56,7 +54,6 @@ def create_purchase(db: Session, user_id: int, purchase: PurchaseCreate):
         except (KeyError, ValueError):
             raise HTTPException(status_code=500, detail="Malformed response from Twelve Data")
 
-        # Save to DB
         db_price = StockPrice(
             stock_id=stock.id,
             date=purchase_date,
@@ -105,7 +102,6 @@ def get_stock_growth(user_id: int, stock_id: int, db: Session):
     start_date = min(p.purchase_date for p in purchases)
     today = date.today()
 
-    # Fetch any missing price data from API and store
     existing_price_dates = {
         p.date for p in db.query(StockPrice).filter(StockPrice.stock_id == stock_id).all()
     }
@@ -132,15 +128,15 @@ def get_stock_growth(user_id: int, stock_id: int, db: Session):
         for v in values:
             date_obj = date.fromisoformat(v["datetime"])
             if date_obj in existing_price_dates:
-                continue  # Skip existing entry
+                continue 
             try:
                 price = float(v["close"])
                 db.add(StockPrice(stock_id=stock_id, date=date_obj, close_price=round(price, 2)))
             except (KeyError, ValueError):
-                continue  # Skip malformed data
+                continue
         db.commit()
 
-    # Build price lookup
+
     prices = (
         db.query(StockPrice)
         .filter(StockPrice.stock_id == stock_id, StockPrice.date >= start_date)
@@ -164,7 +160,6 @@ def get_stock_growth(user_id: int, stock_id: int, db: Session):
 def get_total_portfolio_growth(user_id: int, db: Session):
     from collections import defaultdict
 
-    # Get all user purchases grouped by stock
     purchases = (
         db.query(UserPurchase)
         .filter(UserPurchase.user_id == user_id)
@@ -178,7 +173,6 @@ def get_total_portfolio_growth(user_id: int, db: Session):
     start_date = min(p.purchase_date for p in purchases)
     today = date.today()
 
-    # Ensure price data exists for all stocks and dates
     token = os.getenv("TWELVE_DATA_API_KEY")
     if not token:
         raise HTTPException(status_code=500, detail="API key not configured")
@@ -213,7 +207,6 @@ def get_total_portfolio_growth(user_id: int, db: Session):
                     continue
             db.commit()
 
-    # Aggregate total value over time
     price_lookup = defaultdict(dict)
     all_prices = db.query(StockPrice).filter(StockPrice.stock_id.in_(stock_ids)).all()
     for p in all_prices:

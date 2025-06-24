@@ -17,8 +17,6 @@ app = FastAPI()
 #     allow_headers=["*"],
 # )
 
-
-
 app.include_router(router, prefix="/api")
 
 
@@ -28,5 +26,11 @@ app.mount("/static", StaticFiles(directory="backend/frontend/build/static"), nam
 async def serve_react_app(full_path: str):
     if full_path.startswith("api/"):
         return {"error": "API route not found"}
+    
+    if "." in full_path and not full_path.endswith(".html"):
+        try:
+            return FileResponse(f"backend/frontend/build/{full_path}")
+        except:
+            pass
     
     return FileResponse("backend/frontend/build/index.html")
