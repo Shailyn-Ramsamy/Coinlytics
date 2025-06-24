@@ -1,9 +1,9 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from db import get_db
-from schemas.user import UserRead
-from services.user_service import get_user_by_id
+from backend.db import get_db
+from backend.schemas.user import UserRead
+from backend.services.user_service import get_user_by_id
 
 router = APIRouter(prefix="/users", tags=["users"])
 

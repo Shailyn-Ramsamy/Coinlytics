@@ -4,9 +4,9 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from services.auth_service import get_current_user
-from db import get_db
-from services.portfolio_service import get_portfolio_value_history
+from backend.services.auth_service import get_current_user
+from backend.db import get_db
+from backend.services.portfolio_service import get_portfolio_value_history
 
 router = APIRouter()
 

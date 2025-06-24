@@ -5,10 +5,10 @@ import os
 import requests
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from models.userPurchase import UserPurchase
-from models.stocks import Stock
-from models.stockprice import StockPrice
-from schemas.purchase import PurchaseCreate
+from backend.models.userPurchase import UserPurchase
+from backend.models.stocks import Stock
+from backend.models.stockprice import StockPrice
+from backend.schemas.purchase import PurchaseCreate
 
 
 def create_purchase(db: Session, user_id: int, purchase: PurchaseCreate):

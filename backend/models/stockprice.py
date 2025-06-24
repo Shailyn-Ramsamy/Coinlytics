@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, Date, Numeric, UniqueConstraint
 from sqlalchemy.orm import relationship
-from db.base import Base
+from backend.db.base import Base
 from .stocks import Stock
 
 class StockPrice(Base):

@@ -1,9 +1,9 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from services.stock_service import get_portfolio_distribution, search_stocks
-from db import get_db
-from schemas.purchase import StockRead
+from backend.services.stock_service import get_portfolio_distribution, search_stocks
+from backend.db import get_db
+from backend.schemas.purchase import StockRead
 
 router = APIRouter(prefix="/stocks", tags=["stocks"])
 

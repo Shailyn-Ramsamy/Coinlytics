@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
-from services.purchase_service import get_stock_growth
-from schemas.charts import PieChartData
-from models.stocks import Stock
+from backend.services.purchase_service import get_stock_growth
+from backend.schemas.charts import PieChartData
+from backend.models.stocks import Stock
 from sqlalchemy import func
-from models.userPurchase import UserPurchase
+from backend.models.userPurchase import UserPurchase
 
 def search_stocks(db: Session, query: str = "", page: int = 1, page_size: int = 20):
     offset = (page - 1) * page_size

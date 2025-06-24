@@ -2,19 +2,19 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from services.auth_service import get_or_create_google_user, get_current_user
-from db import get_db
+from backend.services.auth_service import get_or_create_google_user, get_current_user
+from backend.db import get_db
 from starlette import status
-from models.user import User
-from schemas.user import GoogleUserInfo, UserRead
+from backend.models.user import User
+from backend.schemas.user import GoogleUserInfo, UserRead
 from datetime import datetime, timedelta
 from google.auth.transport import requests
 from google.oauth2 import id_token
-from dotenv import load_dotenv
 import os
 from pydantic import BaseModel
 from jose import jwt
 
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -60,8 +60,8 @@ def login_google(token_req: TokenRequest, db: db_dependancy):
             key="access_token",
             value=jwt_token,
             httponly=True,
-            secure=False,
-            samesite=None,
+            secure=True,
+            samesite="Strict",
             max_age=60 * 60
         )
         return response

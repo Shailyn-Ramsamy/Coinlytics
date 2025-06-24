@@ -1,15 +1,15 @@
 // external_api/finnhub.ts
+import api from "../api/axios";
+
 export async function fetchLatestStockNews(category?: string | null) {
-  let url = "http://localhost:8000/news/stocks";
-  if (category) {
-    url += `?category=${category}`;
+  try {
+    const res = await api.get("/news/stocks", {
+      params: category ? { category } : {},
+    });
+
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch news", err);
+    throw err;
   }
-
-  const res = await fetch(url, {
-    credentials: "include",
-  });
-  if (!res.ok) throw new Error("Failed to fetch news");
-
-  const data = await res.json();
-  return data; 
 }

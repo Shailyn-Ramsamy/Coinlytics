@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from services.auth_service import get_current_user
-from db import get_db
-from schemas.purchase import PurchaseCreate, PurchaseRead, StockRead
-from services.purchase_service import create_purchase, get_stock_growth, get_total_portfolio_growth, get_user_unique_stocks
+from backend.services.auth_service import get_current_user
+from backend.db import get_db
+from backend.schemas.purchase import PurchaseCreate, PurchaseRead, StockRead
+from backend.services.purchase_service import create_purchase, get_stock_growth, get_total_portfolio_growth, get_user_unique_stocks
 from fastapi import status
 
 router = APIRouter()

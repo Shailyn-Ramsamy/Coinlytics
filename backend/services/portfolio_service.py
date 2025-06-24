@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from dotenv import load_dotenv
 from datetime import datetime
-from models.userPurchase import UserPurchase
+from backend.models.userPurchase import UserPurchase
 
 load_dotenv()
 

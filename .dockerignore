@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# React build cache
+*.log
+.build/
+.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Python envs
+env/
+.venv/
+venv/
+
+# Docker
+Dockerfile*
+docker-compose.yml
+
+# Secrets
+*.env
+secrets/
+

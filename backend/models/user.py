@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, TIMESTAMP
-from db.session import SessionLocal
-from db.base import Base
+from backend.db.session import SessionLocal
+from backend.db.base import Base
 from datetime import datetime
 
 class User(Base):

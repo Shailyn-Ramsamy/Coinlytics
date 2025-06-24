@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Annotated
-from api.routes import users
-from api.routes import auth
-from api.routes import news
-from api.routes import purchase
-from api.routes import portfolio
-from api.routes import stocks
+from backend.api.routes import users
+from backend.api.routes import auth
+from backend.api.routes import news
+from backend.api.routes import purchase
+from backend.api.routes import portfolio
+from backend.api.routes import stocks
 
 
 router = APIRouter()

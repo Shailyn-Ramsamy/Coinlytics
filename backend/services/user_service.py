@@ -2,8 +2,8 @@ import os
 import re
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from models.user import User
-from schemas.user import UserRead
+from backend.models.user import User
+from backend.schemas.user import UserRead
 from passlib.context import CryptContext
 from fastapi import Request
 from jose import JWTError, jwt

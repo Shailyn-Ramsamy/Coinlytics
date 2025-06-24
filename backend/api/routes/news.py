@@ -5,7 +5,7 @@ from typing import Optional
 from starlette import status
 from dotenv import load_dotenv
 
-from services.auth_service import get_current_user
+from backend.services.auth_service import get_current_user
 load_dotenv()
 
 router = APIRouter()
